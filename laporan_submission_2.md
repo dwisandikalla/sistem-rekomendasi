@@ -2,13 +2,17 @@
 
 ## Project Overview
 
-Pada bagian ini, Kamu perlu menuliskan latar belakang yang relevan dengan proyek yang diangkat.
+Pertumbuhan industri hiburan digital khususnya dalam bidang anime telah berkembang pesat dalam dekade terakhir. Berdasarkan laporan dari Anime News Network, setiap tahunnya terdapat lebih dari 200 judul anime baru yang dirilis hanya di Jepang. Situasi ini menyebabkan information overload, yaitu kondisi di mana pengguna menghadapi terlalu banyak pilihan sehingga kesulitan dalam memilih konten yang sesuai dengan preferensi mereka (Ricci, Rokach, & Shapira, 2015).
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Jelaskan mengapa dan bagaimana masalah tersebut harus diselesaikan
-- Menyertakan hasil riset terkait atau referensi. Referensi yang diberikan harus berasal dari sumber yang kredibel dan author yang jelas.
-- Format Referensi dapat mengacu pada penulisan sitasi [IEEE](https://journals.ieeeauthorcenter.ieee.org/wp-content/uploads/sites/7/IEEE_Reference_Guide.pdf), [APA](https://www.mendeley.com/guides/apa-citation-guide/) atau secara umum seperti [di sini](https://penerbitdeepublish.com/menulis-buku-membuat-sitasi-dengan-mudah/)
-- Sumber yang bisa digunakan [Scholar](https://scholar.google.com/)
+Salah satu solusi efektif dalam permasalahan ini adalah penggunaan sistem rekomendasi. Sistem rekomendasi mampu memberikan saran personal berdasarkan pola interaksi pengguna dengan konten sebelumnya, dan telah banyak digunakan pada platform seperti Netflix, YouTube, dan Spotify (Su & Khoshgoftaar, 2009). Di ranah anime, sistem rekomendasi tidak hanya meningkatkan pengalaman pengguna, tetapi juga membantu meningkatkan retensi dan engagement pengguna terhadap platform distribusi anime seperti MyAnimeList atau AniList.
+
+Sistem rekomendasi tradisional seperti popularity-based atau content-based filtering cenderung kurang akurat karena tidak memperhatikan perilaku kolektif pengguna (Schäfer et al., 2007). Sebaliknya, pendekatan Collaborative Filtering (CF) menawarkan akurasi yang lebih tinggi dengan cara memanfaatkan informasi dari pengguna lain yang memiliki preferensi serupa.
+
+Namun, pendekatan CF konvensional seperti matrix factorization memiliki keterbatasan dalam menangkap non-linearitas dan kompleksitas hubungan antar pengguna dan item. Oleh karena itu, pendekatan modern seperti Neural Collaborative Filtering (NCF), yang menggabungkan teknik deep learning dengan collaborative filtering, menjadi solusi yang lebih powerful dalam mengatasi kelemahan tersebut (He et al., 2017).
+
+Dalam proyek ini, dikembangkan sebuah sistem rekomendasi anime berbasis Neural Collaborative Filtering dengan memanfaatkan data interaksi user-anime berupa rating. Model dirancang menggunakan framework TensorFlow dan memanfaatkan embedding layers untuk merepresentasikan masing-masing pengguna dan anime dalam ruang vektor berdimensi rendah. Prediksi dilakukan dengan menghitung dot product dari vektor pengguna dan anime, disertai bias, untuk menghasilkan skor rating prediktif.
+
+Sistem ini diharapkan mampu memberikan saran yang lebih personal dan relevan kepada pengguna berdasarkan preferensi mereka sebelumnya. Model juga dievaluasi menggunakan metrik seperti Root Mean Squared Error (RMSE) untuk mengukur akurasi prediksi rating.
 
 ## Business Understanding
 
@@ -74,6 +78,15 @@ Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, probl
 - Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
 
 **---Ini adalah bagian akhir laporan---**
+
+## Referensu
+> He, X., Liao, L., Zhang, H., Nie, L., Hu, X., & Chua, T. S. (2017). Neural collaborative filtering. Proceedings of the 26th International Conference on World Wide Web, 173–182. https://doi.org/10.1145/3038912.3052569
+> 
+> Ricci, F., Rokach, L., & Shapira, B. (2015). Recommender Systems Handbook (2nd ed.). Springer. https://doi.org/10.1007/978-1-4899-7637-6
+> 
+> Schäfer, J. B., Frankowski, D., Herlocker, J. L., & Sen, S. (2007). Collaborative Filtering Recommender Systems. In The Adaptive Web (pp. 291–324). Springer. https://doi.org/10.1007/978-3-540-72079-9_9
+> 
+> Su, X., & Khoshgoftaar, T. M. (2009). A survey of collaborative filtering techniques. Advances in Artificial Intelligence, 2009, Article ID 421425. https://doi.org/10.1155/2009/421425
 
 _Catatan:_
 - _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
