@@ -244,7 +244,7 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
        *Genre:* Adventure, Mecha, Sci-Fi, Shounen, Space  
     *  **Choujuushin Gravion**  
        *Genre:* Action, Comedy, Mecha, Sci-Fi, Shounen  
-    ==========================================================================================
+    ============================================================================
     Rekomendasi Anime Teratas
     *  **Kimi no Na wa.**  
        *Genre:* Drama, Romance, School, Supernatural  
