@@ -268,12 +268,21 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
         *Genre:* Action, Drama, Mecha, Military, Sci-Fi, Super Power
    
 ## Evaluation
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
+Dalam proyek ini digunakan Root Mean Squared Error (RMSE) sebagai metrik evaluasi utama. RMSE digunakan karena model ini berfokus pada prediksi nilai rating user terhadap anime, yang merupakan data kontinu (bukan klasifikasi).
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+### Rumus RMSE:
+$$
+\text{RMSE} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
+$$
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+- $\( y_i \)$ = rating sebenarnya
+- $\( \hat{y}_i \)$ = rating yang diprediksi oleh model
+- $\( n \)$ = jumlah data
+
+### Cara Kerja RMSE
+RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratkan selisih tersebut agar tidak saling meniadakan (positif-negatif), menjumlahkannya, lalu diambil akar rata-rata kuadratnya. Dengan demikian:
+* Semakin kecil nilai RMSE, semakin kecil rata-rata kesalahan prediksi model.
+* Karena nilai rating dinormalisasi dalam rentang 0–1, maka RMSE juga berada di rentang 0–1.
 
 **---Ini adalah bagian akhir laporan---**
 
