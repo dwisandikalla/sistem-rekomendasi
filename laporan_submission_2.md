@@ -279,14 +279,21 @@ $$
 - $\( \hat{y}_i \)$ = rating yang diprediksi oleh model
 - $\( n \)$ = jumlah data
 
+Hasil RMSE pada data training dan validasi:
+
+![download](https://github.com/user-attachments/assets/58979ff6-c047-47c0-a27e-59ed9b59c503)
+
 ### Cara Kerja RMSE
 RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratkan selisih tersebut agar tidak saling meniadakan (positif-negatif), menjumlahkannya, lalu diambil akar rata-rata kuadratnya. Dengan demikian:
 * Semakin kecil nilai RMSE, semakin kecil rata-rata kesalahan prediksi model.
 * Karena nilai rating dinormalisasi dalam rentang 0–1, maka RMSE juga berada di rentang 0–1.
 
-**---Ini adalah bagian akhir laporan---**
+### Alasan Memilih RMSE
+* Cocok untuk data regresi seperti prediksi rating.
+* Peka terhadap error besar, sehingga model didorong untuk meminimalkan prediksi yang jauh meleset.
+* Memudahkan interpretasi karena memiliki satuan yang sama dengan skala rating.
 
-## Referensu
+## Referensi
 > He, X., Liao, L., Zhang, H., Nie, L., Hu, X., & Chua, T. S. (2017). Neural collaborative filtering. Proceedings of the 26th International Conference on World Wide Web, 173–182. https://doi.org/10.1145/3038912.3052569
 > 
 > Ricci, F., Rokach, L., & Shapira, B. (2015). Recommender Systems Handbook (2nd ed.). Springer. https://doi.org/10.1007/978-1-4899-7637-6
@@ -294,7 +301,3 @@ RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratk
 > Schäfer, J. B., Frankowski, D., Herlocker, J. L., & Sen, S. (2007). Collaborative Filtering Recommender Systems. In The Adaptive Web (pp. 291–324). Springer. https://doi.org/10.1007/978-3-540-72079-9_9
 > 
 > Su, X., & Khoshgoftaar, T. M. (2009). A survey of collaborative filtering techniques. Advances in Artificial Intelligence, 2009, Article ID 421425. https://doi.org/10.1155/2009/421425
-
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
