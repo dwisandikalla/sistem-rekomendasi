@@ -384,7 +384,7 @@ $$
 
 * Hasil RMSE pada data training dan validasi:
 
-![download](https://github.com/user-attachments/assets/f877aef8-6d68-4428-8465-b973d26033f6)
+  ![download](https://github.com/user-attachments/assets/f877aef8-6d68-4428-8465-b973d26033f6)
 
 * Cara Kerja RMSE
   RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratkan selisih tersebut agar tidak saling meniadakan (positif-negatif), menjumlahkannya, lalu diambil akar rata-rata kuadratnya. Dengan demikian:
