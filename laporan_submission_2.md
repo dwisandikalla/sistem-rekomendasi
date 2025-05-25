@@ -175,6 +175,57 @@ Dataset ini diambil dari [Kaggle](https://www.kaggle.com/datasets/CooperUnion/an
    ```
    Langkah ini dilakukan untuk memastikan tidak ada missing value yang tersisa dan struktur data sudah siap digunakan pada tahap modeling.
 
+### Content Based Filtering
+1. TF-IDF
+   ```python
+   tfidf = TfidfVectorizer(stop_words='english')
+   tfidf_matrix = tfidf.fit_transform(data['genre'])
+   ```
+   Memproses fitur teks pada kolom genre diubah menjadi representasi numerik menggunakan metode TF-IDF (Term Frequency-Inverse Document Frequency). TF-IDF ini membantu mengekstrak informasi penting dari deskripsi genre dengan mengurangi pengaruh kata-kata umum (stop words) dalam bahasa Inggris.
+
+2. Cosine Similarity
+    ```python
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+    cosine_sim_df = pd.DataFrame(cosine_sim, index=data['name'], columns=data['name'])
+    ```
+    Setelah mendapatkan matriks TF-IDF, dilakukan perhitungan kemiripan antar anime berdasarkan genre menggunakan cosine similarity. Hasilnya disimpan dalam sebuah DataFrame, yang memperlihatkan tingkat kemiripan antara setiap pasangan anime berdasarkan genre mereka.
+
+### Colaborative Filtering
+1. Encoding
+    ```python
+    user_ids = df['userID'].unique().tolist()
+    anime_ids = df['animeID'].unique().tolist()
+    
+    user_to_encoded = {x: i for i, x in enumerate(user_ids)}
+    anime_to_encoded = {x: i for i, x in enumerate(anime_ids)}
+    
+    df['user'] = df['userID'].map(user_to_encoded)
+    df['anime'] = df['animeID'].map(anime_to_encoded)
+    ```
+    Kode ini bertujuan mengubah ID asli pengguna (userID) dan anime (animeID) menjadi indeks numerik yang berurutan mulai dari 0. Proses ini penting untuk collaborative filtering karena algoritma tersebut biasanya membutuhkan input dalam bentuk indeks numerik agar dapat mengelola data dengan efisien, seperti membangun matriks interaksi pengguna-anime. Dengan cara ini, data menjadi lebih mudah diolah dalam model rekomendasi.
+
+2. Normalisasi Data
+    ```python
+    df['rating_x'] = df['rating_x'].astype('float32')
+    min_rating, max_rating = df['rating_x'].min(), df['rating_x'].max()
+    df['norm_rating'] = df['rating_x'].apply(lambda x: (x - min_rating) / (max_rating - min_rating))
+    ```
+    Proses ini melakukan normalisasi nilai rating agar berada dalam rentang 0 hingga 1. Pertama, tipe data rating diubah ke float32 untuk efisiensi memori dan konsistensi tipe data. Kemudian, nilai rating asli diubah menggunakan rumus normalisasi min-max, yaitu menggeser dan menskalakan semua nilai supaya proporsional antara nilai minimum dan maksimum. Normalisasi ini penting dalam collaborative filtering atau model machine learning lainnya agar skala nilai rating seragam, sehingga model dapat belajar dengan lebih stabil dan menghasilkan rekomendasi yang lebih akurat.
+
+3. Pengacakan Data
+    ```python
+    df = df.sample(frac=1, random_state=42)
+    ```
+    Kode ini melakukan pengacakan (shuffling) pada seluruh baris data secara acak menggunakan sample dengan parameter frac=1, yang berarti mengambil 100% data dalam urutan acak. random_state=42 digunakan agar hasil pengacakan dapat direproduksi secara konsisten. Pengacakan data penting untuk memastikan model machine learning atau collaborative filtering tidak terpengaruh oleh urutan data asli, sehingga proses pelatihan dan evaluasi model menjadi lebih adil dan hasilnya lebih general.
+
+4. Splitting Data
+    ```python
+    x = df[['user', 'anime']].values
+    y = df['norm_rating'].values
+    x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, random_state=42)
+    ```
+    Kode ini memisahkan data fitur (user, anime) dan target (norm_rating), lalu membaginya menjadi data latih dan validasi dengan rasio 80:20. Pembagian ini penting agar model dapat dilatih dan diuji secara adil menggunakan data yang berbeda, serta memastikan hasil evaluasi lebih akurat.
+
 ## Modeling
 Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi anime, yaitu Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan dirancang untuk menjawab permasalahan dalam merekomendasikan anime kepada pengguna secara personal dan relevan.
 
@@ -185,14 +236,21 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
    * Menghitung kemiripan antar anime menggunakan Cosine Similarity.
    * Mengembalikan anime yang paling mirip dengan input yang diberikan.
 
-   Kelebihan :
-   * Tidak membutuhkan data pengguna.
-   * Cocok untuk item-item baru yang belum memiliki rating (cold start untuk item).
-   * Hasil rekomendasi dapat dijelaskan karena didasarkan pada fitur konten (misalnya genre mirip).
+   * Kelebihan :
+    * Tidak membutuhkan data pengguna.
+    * Cocok untuk item-item baru yang belum memiliki rating (cold start untuk item).
+    * Hasil rekomendasi dapat dijelaskan karena didasarkan pada fitur konten (misalnya genre mirip).
 
-   Kekurangan :
-   * Terbatas hanya pada kemiripan konten — tidak bisa menangkap preferensi pengguna yang kompleks.
-   * Tidak bisa merekomendasikan anime di luar genre yang sudah disukai.
+   * Kekurangan :
+    * Terbatas hanya pada kemiripan konten — tidak bisa menangkap preferensi pengguna yang kompleks.
+    * Tidak bisa merekomendasikan anime di luar genre yang sudah disukai.
+  
+   * Cara Kerja Cosine Similarity:
+     Cosine similarity mengukur tingkat kemiripan antara dua vektor dengan menghitung cosinus sudut di antara keduanya. Rumusnya adalah sebagai berikut:
+
+    $$
+ \text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{\|\vec{A}\| \cdot \|\vec{B}\|}
+   $$
 
    Contoh Penerapan:
    ```python
@@ -208,30 +266,47 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
     | 4  | Naruto: Shippuuden Movie 4 - The Lost Tower             | Action, Comedy, Martial Arts, Shounen, Super Power                |
     | 5  | Boruto: Naruto the Movie                                | Action, Comedy, Martial Arts, Shounen, Super Power                |
 
-2. Collaborative Filtering
+3. Collaborative Filtering
    Collaborative Filtering mempelajari hubungan antara pengguna dan anime berdasarkan rating yang diberikan, tanpa melihat isi konten anime itu sendiri. Model ini dibuat menggunakan pendekatan Matrix Factorization dengan TensorFlow.
 
-   Langkah-langkah:
-   * Encoding user dan anime ke dalam ID numerik.
-   * Menormalisasi rating dari skala aslinya ke [0, 1].
-   * Melatih model neural network dengan embedding untuk pengguna dan anime.
-   * Menyimpan bobot embedding sebagai representasi fitur laten.
+   * Langkah-langkah:
+     * Encoding user dan anime ke dalam ID numerik.
+     * Menormalisasi rating dari skala aslinya ke [0, 1].
+     * Melatih model neural network dengan embedding untuk pengguna dan anime.
+     * Menyimpan bobot embedding sebagai representasi fitur laten.
 
-   Arsitektur Model:
-   * Embedding pengguna dan anime.
-   * Penjumlahan bias.
-   * Dense Layer + Dropout.
-   * Output layer dengan aktivasi sigmoid.
+   * Arsitektur Model:
+     * Embedding pengguna dan anime.
+     * Penjumlahan bias.
+     * Dense Layer + Dropout.
+     * Output layer dengan aktivasi sigmoid.
 
-   Kelebihan:
-   * Mampu mempelajari pola kompleks dari perilaku pengguna.
-   * Cocok untuk menangkap preferensi pengguna secara personal.
-   * Dapat merekomendasikan anime dari genre yang belum pernah ditonton sebelumnya (serendipity).
+   * Kelebihan:
+     * Mampu mempelajari pola kompleks dari perilaku pengguna.
+     * Cocok untuk menangkap preferensi pengguna secara personal.
+     * Dapat merekomendasikan anime dari genre yang belum pernah ditonton sebelumnya (serendipity).
   
-   Kekurangan:
-   * Tidak bekerja dengan baik jika data rating sangat sedikit (cold start untuk user).
-   * Membutuhkan proses training yang lebih kompleks dan waktu komputasi lebih lama.
-     Rekomendasi Anime untuk User ID: 6113 (Collaborative Filtering)
+   * Kekurangan:
+     * Tidak bekerja dengan baik jika data rating sangat sedikit (cold start untuk user).
+     * Membutuhkan proses training yang lebih kompleks dan waktu komputasi lebih lama.
+       Rekomendasi Anime untuk User ID: 6113 (Collaborative Filtering)
+
+   * Cara Kerja RecommenderNet
+      * Input Data
+        Data masukan terdiri dari pasangan (user, anime) yang sudah di-encode sebagai indeks numerik. Targetnya adalah rating yang telah dinormalisasi ke rentang 0–1.
+      * Embedding Layer
+        Model memiliki dua embedding layer: satu untuk pengguna dan satu untuk anime. Masing-masing mengubah ID menjadi vektor berdimensi 50 yang merepresentasikan karakteristik laten (latent features).
+      * Bias Embedding
+        Disertakan pula bias embedding untuk pengguna dan anime untuk menangkap kecenderungan rating spesifik dari masing-masing entitas. 
+      * Kombinasi Vektor (Dot Product)
+        Vektor user dan anime dikalikan elemen-per-elemen (element-wise product) dan dijumlahkan (dot product), lalu ditambahkan dengan bias masing-masing. 
+      * Layer Tambahan
+        Hasil dot product + bias kemudian masuk ke layer dense (ukuran 64, aktivasi ReLU), lalu dropout untuk mencegah overfitting, dan akhirnya layer output dengan aktivasi sigmoid (karena rating sudah dinormalisasi ke [0, 1]).
+      * Pelatihan Model
+        Model dilatih menggunakan loss function Mean Squared Error (MSE) dan optimizer Adam, dengan evaluasi menggunakan metrik Root Mean Squared Error (RMSE).
+      Penggunaan EarlyStopping dan ReduceLROnPlateau membantu menghentikan pelatihan dini saat performa stagnan dan menyesuaikan laju pembelajaran otomatis.
+      * Prediksi dan Rekomendasi
+        Setelah pelatihan, model dapat memprediksi tingkat kesukaan pengguna terhadap anime tertentu dan memberikan rekomendasi berdasarkan rating tertinggi.
 
     Anime dengan Rating Tinggi oleh Pengguna
     *  **Macross: Do You Remember Love?**  
@@ -268,30 +343,58 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
         *Genre:* Action, Drama, Mecha, Military, Sci-Fi, Super Power
    
 ## Evaluation
+
+### Content Based Filtering
+Dalam content based filtering digunakan metrik evaluasi Precision@K adalah metrik evaluasi dalam sistem rekomendasi yang mengukur seberapa relevan item yang direkomendasikan oleh model dalam daftar K teratas.
+
+* Rumus untuk Precision@K
+
+$$
+\text{Precision@K} = \frac{\text{Jumlah item relevan dalam K rekomendasi}}{\text{K}}
+$$
+
+* Cara Kerja: <br>
+  * Diambil sampel 100 pengguna secara acak dari data.
+  * Untuk setiap pengguna, dipilih satu anime yang pernah mereka beri rating tinggi (disukai) sebagai query anime.
+  * Dari query tersebut, sistem menghasilkan 5 anime teratas yang direkomendasikan menggunakan metode content-based filtering.
+  * Precision dihitung dengan membandingkan daftar 5 rekomendasi terhadap daftar anime yang benar-benar disukai oleh pengguna tersebut (ground truth).
+  * Proses ini diulang untuk seluruh 100 pengguna, dan nilai Precision@5 dirata-rata untuk mendapatkan skor keseluruhan (Average Precision@5).
+
+* Hasil Evaluasi
+  Berdasarkan evaluasi terhadap 100 pengguna, diperoleh hasil:
+
+$$
+\text{Average Precision@K} = 0.0560
+$$
+  
+  Artinya, secara rata-rata hanya 5,6% dari 5 rekomendasi teratas yang benar-benar sesuai dengan preferensi pengguna. Ini menunjukkan bahwa sistem mulai mampu menangkap preferensi pengguna, namun akurasinya masih perlu ditingkatkan.
+
+### Collaborative Filtering
 Dalam proyek ini digunakan Root Mean Squared Error (RMSE) sebagai metrik evaluasi utama. RMSE digunakan karena model ini berfokus pada prediksi nilai rating user terhadap anime, yang merupakan data kontinu (bukan klasifikasi).
 
-### Rumus RMSE:
+* Rumus RMSE:
+
 $$
 \text{RMSE} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
 $$
 
-- $\( y_i \)$ = rating sebenarnya
-- $\( \hat{y}_i \)$ = rating yang diprediksi oleh model
-- $\( n \)$ = jumlah data
+- $y_i$ = rating sebenarnya
+- $\hat{y}_i$ = rating yang diprediksi oleh model
+- $(n)$ = jumlah data
 
-Hasil RMSE pada data training dan validasi:
+* Hasil RMSE pada data training dan validasi:
 
-![download](https://github.com/user-attachments/assets/58979ff6-c047-47c0-a27e-59ed9b59c503)
+![download](https://github.com/user-attachments/assets/f877aef8-6d68-4428-8465-b973d26033f6)
 
-### Cara Kerja RMSE
-RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratkan selisih tersebut agar tidak saling meniadakan (positif-negatif), menjumlahkannya, lalu diambil akar rata-rata kuadratnya. Dengan demikian:
-* Semakin kecil nilai RMSE, semakin kecil rata-rata kesalahan prediksi model.
-* Karena nilai rating dinormalisasi dalam rentang 0–1, maka RMSE juga berada di rentang 0–1.
+* Cara Kerja RMSE
+  RMSE menghitung selisih antara rating prediksi dan aktual, kemudian mengkuadratkan selisih tersebut agar tidak saling meniadakan (positif-negatif), menjumlahkannya, lalu diambil akar rata-rata kuadratnya. Dengan demikian:
+  * Semakin kecil nilai RMSE, semakin kecil rata-rata kesalahan prediksi model.
+  * Karena nilai rating dinormalisasi dalam rentang 0–1, maka RMSE juga berada di rentang 0–1.
 
-### Alasan Memilih RMSE
-* Cocok untuk data regresi seperti prediksi rating.
-* Peka terhadap error besar, sehingga model didorong untuk meminimalkan prediksi yang jauh meleset.
-* Memudahkan interpretasi karena memiliki satuan yang sama dengan skala rating.
+* Alasan Memilih RMSE
+  * Cocok untuk data regresi seperti prediksi rating.
+  * Peka terhadap error besar, sehingga model didorong untuk meminimalkan prediksi yang jauh meleset.
+  * Memudahkan interpretasi karena memiliki satuan yang sama dengan skala rating.
 
 ## Referensi
 > He, X., Liao, L., Zhang, H., Nie, L., Hu, X., & Chua, T. S. (2017). Neural collaborative filtering. Proceedings of the 26th International Conference on World Wide Web, 173–182. https://doi.org/10.1145/3038912.3052569
