@@ -176,19 +176,19 @@ Dataset ini diambil dari [Kaggle](https://www.kaggle.com/datasets/CooperUnion/an
    Langkah ini dilakukan untuk memastikan tidak ada missing value yang tersisa dan struktur data sudah siap digunakan pada tahap modeling.
 
 ### Content Based Filtering
-1. TF-IDF
+1. Menghapus Duplikat dan mengisi dengan string
+   ```python
+   data = anime_rating[['anime_id', 'name', 'genre']].drop_duplicates()
+   data['genre'] = data['genre'].fillna('')
+   ```
+   Kode tersebut bertujuan untuk mempersiapkan data anime dengan memilih kolom anime_id, name, dan genre dari dataframe anime_rating, kemudian menghapus baris duplikat berdasarkan kombinasi nilai di ketiga kolom tersebut. Selanjutnya, nilai yang hilang atau kosong pada kolom genre akan diisi dengan string kosong (''), memastikan tidak ada nilai NaN yang mengganggu analisis lebih lanjut pada kolom genre.
+   
+2. TF-IDF
    ```python
    tfidf = TfidfVectorizer(stop_words='english')
    tfidf_matrix = tfidf.fit_transform(data['genre'])
    ```
    Memproses fitur teks pada kolom genre diubah menjadi representasi numerik menggunakan metode TF-IDF (Term Frequency-Inverse Document Frequency). TF-IDF ini membantu mengekstrak informasi penting dari deskripsi genre dengan mengurangi pengaruh kata-kata umum (stop words) dalam bahasa Inggris.
-
-2. Cosine Similarity
-    ```python
-    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-    cosine_sim_df = pd.DataFrame(cosine_sim, index=data['name'], columns=data['name'])
-    ```
-    Setelah mendapatkan matriks TF-IDF, dilakukan perhitungan kemiripan antar anime berdasarkan genre menggunakan cosine similarity. Hasilnya disimpan dalam sebuah DataFrame, yang memperlihatkan tingkat kemiripan antara setiap pasangan anime berdasarkan genre mereka.
 
 ### Colaborative Filtering
 1. Encoding
@@ -257,14 +257,11 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
    anime_recommendations('Naruto')
    ```
    Output:
-
-    | No | Judul Anime                                             | Genre                                                             |
-    |----|----------------------------------------------------------|--------------------------------------------------------------------|
-    | 1  | Boruto: Naruto the Movie - Naruto ga Hokage ni...       | Action, Comedy, Martial Arts, Shounen, Super Power                |
-    | 2  | Naruto Shippuuden: Sunny Side Battle                    | Action, Comedy, Martial Arts, Shounen, Super Power                |
-    | 3  | Naruto x UT                                              | Action, Comedy, Martial Arts, Shounen, Super Power                |
-    | 4  | Naruto: Shippuuden Movie 4 - The Lost Tower             | Action, Comedy, Martial Arts, Shounen, Super Power                |
-    | 5  | Boruto: Naruto the Movie                                | Action, Comedy, Martial Arts, Shounen, Super Power                |
+   1. Boruto: Naruto the Movie - Naruto ga Hokage ni...
+   2. Naruto Shippuuden: Sunny Side Battle
+   3. Naruto x UT
+   4. Naruto: Shippuuden Movie 4 - The Lost Tower
+   5. Boruto: Naruto the Movie
 
 3. Collaborative Filtering
    Collaborative Filtering mempelajari hubungan antara pengguna dan anime berdasarkan rating yang diberikan, tanpa melihat isi konten anime itu sendiri. Model ini dibuat menggunakan pendekatan Matrix Factorization dengan TensorFlow.
@@ -395,6 +392,26 @@ $$
   * Cocok untuk data regresi seperti prediksi rating.
   * Peka terhadap error besar, sehingga model didorong untuk meminimalkan prediksi yang jauh meleset.
   * Memudahkan interpretasi karena memiliki satuan yang sama dengan skala rating.
+
+### Analisis Terhadap Bussines Understanding
+1. Apakah Model Menjawab Setiap Problem Statement?
+   * Melalui sistem rekomendasi berbasis Content-Based dan Collaborative Filtering, pengguna kini diberikan rekomendasi yang lebih terfokus, sehingga dapat menyaring pilihan dari ribuan anime menjadi beberapa opsi yang paling relevan. Ini mengurangi beban pencarian secara manual.
+   * Model Collaborative Filtering berhasil mempelajari pola rating pengguna dan memberikan rekomendasi berdasarkan preferensi pengguna lain yang serupa. Hal ini menghasilkan rekomendasi yang lebih personal dibandingkan sekadar mengandalkan daftar anime populer.
+   * Melalui teknik embedding userID dan animeID, model Collaborative Filtering berhasil memanfaatkan histori rating pengguna dalam prediksi. Evaluasi menggunakan RMSE menunjukkan bahwa model mampu memprediksi rating dengan tingkat kesalahan yang relatif rendah, menandakan adanya pemanfaatan data histori yang efektif.
+
+2. Apakah Setiap Goals Berhasil Dicapai?
+   * Model Collaborative Filtering telah dibangun dan diuji menggunakan data histori rating, serta menunjukkan performa yang baik melalui metrik RMSE.
+   * Kedua pendekatan telah berhasil diimplementasikan dan dievaluasi. Content-Based Filtering dievaluasi menggunakan Precision@5, sementara Collaborative Filtering menggunakan RMSE. Hasil evaluasi menunjukkan bahwa keduanya memberikan hasil yang berbeda, yang bisa digunakan untuk eksplorasi hibridisasi model di masa depan.
+   * Evaluasi telah dilakukan secara kuantitatif:
+     * Precision@5 = 0.056 untuk Content-Based Filtering.
+     * RMSE pada Collaborative Filtering menunjukkan nilai kesalahan prediksi yang cukup rendah.
+
+3. Apakah Solusi yang Direncanakan Memberikan Dampak?
+   * Model ini terbukti mampu memberikan rekomendasi berbasis pola rating antar pengguna. RMSE yang rendah menunjukkan bahwa model dapat memprediksi rating dengan cukup baik, sehingga membantu pengguna menemukan anime baru yang sesuai dengan preferensinya. Ini sangat relevan dengan kebutuhan sistem rekomendasi yang personal.
+   * Meskipun nilai Precision@5 masih rendah (5,6%), sistem ini menunjukkan kemampuan awal dalam menangkap kemiripan konten, terutama berdasarkan genre. Ini bisa menjadi pondasi awal untuk pengembangan sistem rekomendasi berbasis konten yang lebih kaya, seperti menggunakan sinopsis, studio, atau bahkan data audio-visual di masa depan.
+
+### Kesimpulan
+Secara keseluruhan, model yang dibangun telah berhasil menjawab seluruh problem statements, mencapai goals yang ditetapkan, dan solusi yang dirancang terbukti memberikan dampak yang nyata, meskipun dengan tingkat akurasi yang bervariasi. Collaborative Filtering menunjukkan performa yang lebih unggul dan efektif dalam memberikan rekomendasi yang personal, sedangkan Content-Based Filtering memberikan pendekatan alternatif yang masih memiliki ruang untuk ditingkatkan. Dengan demikian, proyek ini telah menunjukkan kontribusi nyata dalam meningkatkan pengalaman pengguna dalam menemukan anime yang sesuai dengan preferensi mereka.
 
 ## Referensi
 > He, X., Liao, L., Zhang, H., Nie, L., Hu, X., & Chua, T. S. (2017). Neural collaborative filtering. Proceedings of the 26th International Conference on World Wide Web, 173–182. https://doi.org/10.1145/3038912.3052569
