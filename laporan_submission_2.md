@@ -232,21 +232,20 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
 1. Content-Based Filtering
    Content-Based Filtering merekomendasikan anime yang memiliki kemiripan genre dengan anime yang disukai oleh pengguna. Sistem ini hanya memerlukan informasi konten dari item (dalam hal ini: genre dari anime) dan tidak tergantung pada data pengguna lain. Berikut adalah langkah-langkahnya:
    * Mengambil data anime_id, name, dan genre.
-   * Mengubah teks genre menjadi representasi numerik menggunakan TF-IDF Vectorizer.
    * Menghitung kemiripan antar anime menggunakan Cosine Similarity.
    * Mengembalikan anime yang paling mirip dengan input yang diberikan.
 
-   * Kelebihan :
-    * Tidak membutuhkan data pengguna.
-    * Cocok untuk item-item baru yang belum memiliki rating (cold start untuk item).
-    * Hasil rekomendasi dapat dijelaskan karena didasarkan pada fitur konten (misalnya genre mirip).
+* Kelebihan :
+  * Tidak membutuhkan data pengguna.
+  * Cocok untuk item-item baru yang belum memiliki rating (cold start untuk item).
+  * Hasil rekomendasi dapat dijelaskan karena didasarkan pada fitur konten (misalnya genre mirip).
 
-   * Kekurangan :
-    * Terbatas hanya pada kemiripan konten — tidak bisa menangkap preferensi pengguna yang kompleks.
-    * Tidak bisa merekomendasikan anime di luar genre yang sudah disukai.
+* Kekurangan :
+  * Terbatas hanya pada kemiripan konten — tidak bisa menangkap preferensi pengguna yang kompleks.
+  * Tidak bisa merekomendasikan anime di luar genre yang sudah disukai.
   
-   * Cara Kerja Cosine Similarity:
-     Cosine similarity mengukur tingkat kemiripan antara dua vektor dengan menghitung cosinus sudut di antara keduanya. Rumusnya adalah sebagai berikut:
+* Cara Kerja Cosine Similarity:
+  Cosine similarity mengukur tingkat kemiripan antara dua vektor dengan menghitung cosinus sudut di antara keduanya. Rumusnya adalah sebagai berikut:
 
     $$
  \text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{\|\vec{A}\| \cdot \|\vec{B}\|}
