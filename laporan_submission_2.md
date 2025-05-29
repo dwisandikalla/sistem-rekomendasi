@@ -262,7 +262,7 @@ Dalam proyek ini, saya membangun dua pendekatan berbeda untuk sistem rekomendasi
    4. Naruto: Shippuuden Movie 4 - The Lost Tower
    5. Boruto: Naruto the Movie
 
-3. Collaborative Filtering
+2. Collaborative Filtering
    Collaborative Filtering mempelajari hubungan antara pengguna dan anime berdasarkan rating yang diberikan, tanpa melihat isi konten anime itu sendiri. Model ini dibuat menggunakan pendekatan Matrix Factorization dengan TensorFlow.
 
    * Langkah-langkah:
