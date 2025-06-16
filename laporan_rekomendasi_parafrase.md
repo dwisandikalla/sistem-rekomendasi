@@ -59,12 +59,76 @@ Dataset diambil dari Kaggle: [Anime Recommendation Database](https://www.kaggle.
 ## Data Preparation
 
 - Menghapus baris duplikat dan nilai kosong dari anime.csv.
+
+  Menghapus duplikasi:
+  ```python
+  anime_df.drop_duplicates(inplace=True)
+  rating_df.drop_duplicates(inplace=True)
+
+  rating = rating_df.dropna()
+  rating.reset_index(drop=True, inplace=True)
+  ```
+
+  Menghapus missing value:
+  ```python
+  anime = anime_df.dropna()
+  anime.reset_index(drop=True, inplace=True)
+  rating = rating_df.dropna()
+  rating.reset_index(drop=True, inplace=True)
+  ```
+  
 - Menghilangkan rating bernilai -1 dari rating.csv.
+
+  nilai -1 merupakan anomali pada dataset rating.
+  ```python
+  rating = rating_df[rating_df['rating'] != -1]
+  ```
+  
 - Menyaring data rating agar hanya mencakup anime yang tersedia di anime.csv.
-- Sampling maksimum 100 rating per anime.
+
+  Menyaring agar data rating hanya mencakup anime yang tersedia.
+  ```python
+  rating = rating[rating['anime_id'].isin(anime['anime_id'])]
+  ```
+  
+- Sampling maksimum 50 rating per anime.
+  
+  Berguna agar tidak terlalu memakan waktu komputasi.
+  ```python
+  rating_per_anime = rating.groupby('anime_id').apply(lambda x: x.sample(min(len(x), 50), random_state=42)).reset_index(drop=True)
+  ```
+  
 - Menggabungkan kedua dataset berdasarkan `anime_id` menjadi dataset `anime_rating`.
-- Encoding user dan anime ke indeks numerik.
+  ```python
+  # Merge dataset anime dan rating
+  anime_rating = pd.merge(rating_per_anime, anime, on='anime_id')
+
+  # Final check dimensi
+  print("anime.shape:", anime.shape)
+  print("rating.shape:", rating.shape)
+  print("anime_rating.shape:", anime_rating.shape)
+  ```
+  
+- Menggunakan TF-IDF.
+
+  Berfungsi untuk mengubah teks menjadi vektor.
+  ```python
+  tfidf = TfidfVectorizer(stop_words='english')
+  tfidf_matrix = tfidf.fit_transform(data['genre'])
+  ```
+  
 - Normalisasi rating ke skala 0–1 menggunakan min-max scaling.
+
+  ```python
+  df['rating_x'] = df['rating_x'].astype('float32')
+  min_rating, max_rating = df['rating_x'].min(), df['rating_x'].max()
+  df['norm_rating'] = df['rating_x'].apply(lambda x: (x - min_rating) / (max_rating - min_rating))
+  ```
+- Mengacak sampel data
+  ```python
+  df = df.sample(frac=1, random_state=42)
+  ```
+  
 - Membagi data menjadi training dan validation (80:20).
 
 ## Modeling
