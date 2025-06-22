@@ -50,7 +50,7 @@ Dataset diambil dari Kaggle: [Anime Recommendation Database](https://www.kaggle.
 
 ### EDA dan Temuan
 
-- Missing value ditemukan di genre, type, episodes, dan rating.
+- Missing value ditemukan di genre sebanyak 62, type sebanyak 25, dan rating sebanyak 230.
 - Rating -1 di rating.csv menandakan pengguna tidak menilai.
 - Genre anime sangat beragam dan berperan penting dalam rekomendasi berbasis konten.
 - Visualisasi menunjukkan bias positif: sebagian besar pengguna memberi rating tinggi (8–10).
@@ -167,7 +167,9 @@ Dataset diambil dari Kaggle: [Anime Recommendation Database](https://www.kaggle.
 
 Metrik evaluasi yang digunakan: **Precision@K**
 
-\[ \text{Precision@K} = \frac{\text{Jumlah item relevan dalam K rekomendasi}}{K} \]
+$$
+\text{Precision@K} = \frac{\text{Jumlah item relevan dalam K rekomendasi}}{\text{K}}
+$$
 
 - 100 pengguna diambil secara acak.
 - Rekomendasi diberikan berdasarkan 1 anime favorit per user.
@@ -177,10 +179,12 @@ Metrik evaluasi yang digunakan: **Precision@K**
 
 Metrik evaluasi yang digunakan: **RMSE**
 
-\[ \text{RMSE} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 } \]
+$$
+\text{RMSE} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
+$$
 
 - Model dilatih dengan validasi.
-- Nilai RMSE cukup rendah, menunjukkan kemampuan prediksi yang baik.
+- Nilai RMSE cukup rendah antara training dan validasi yang masing-masing bernilai 0.1266 dan 0.1513, menunjukkan kemampuan prediksi yang baik. Ini juga menunjukkan bahwa sistem rekomendasi telah berjalan dengan baik.
 
 ### Kesimpulan Evaluasi
 
